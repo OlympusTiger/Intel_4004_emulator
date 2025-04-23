@@ -1,0 +1,18 @@
+[project]
+name = "intel-4004-emulator"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "bitarray>=3.3.0",
+    "icecream>=2.1.4",
+    "typeguard>=4.4.2",
+]
+
+[tool.mypy]
+python_version = "3.13"
+ignore_missing_imports = true
+exclude = [
+    "tempCodeRunnerFile.py",
+]

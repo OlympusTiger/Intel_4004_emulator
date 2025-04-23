@@ -1,0 +1,17 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+tempCodeRunnerFile.py
+
+# Virtual environments
+.venv
+
+#test files
+test.py
+
+#mypy
+.mypy_cache/
