@@ -12,6 +12,7 @@ tempCodeRunnerFile.py
 
 #test files
 test.py
-
+programs/
+disassembler.py
 #mypy
 .mypy_cache/

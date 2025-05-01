@@ -1,8 +1,8 @@
 from bitarray.util import int2ba, ba2int
 from bitarray import bitarray
 from typing import Literal, Union
-from typeguard import typechecked
 from functools import total_ordering
+from icecream import ic
 
 
 @total_ordering
@@ -11,11 +11,17 @@ class Word:
         self.value = value
         self.max_bit_size = max_bit_size
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.value}"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.value}"
+
+    def __copy__(self) -> "Word":
+        return Word(self.value, self.max_bit_size)
+
+    def copy(self) -> "Word":
+        return self.__copy__()
 
     def __getitem__(self, key: Union[int, slice]) -> int | bitarray:
         if isinstance(key, slice):
@@ -73,7 +79,7 @@ class Word:
         if overflow_reset and self.value >= 2**self.max_bit_size:
             self.value = 0
 
-    def increment(self):
+    def increment(self) -> None:
         try:
             self.value = ba2int(int2ba(self.value + 1, 4))
         except OverflowError:
@@ -92,7 +98,8 @@ class Register:
     def __getitem__(self, key: int) -> Word:
         return self.register[key]
 
-    def __setitem__(self, key: int, value: Word):
+    def __setitem__(self, key: int, value: Word) -> None:
+        ic(key, value)
         self.register[key] = value
 
     def as_hex(self) -> str:
@@ -102,17 +109,19 @@ class Register:
         return word_separator.join([word.as_bits().to01() for word in self.register])
 
 
-@typechecked
 class ProgramCounter(Register):
     LOOKUP = {"PAGE": 0, "PM": 1, "PL": 2}
 
-    def __init__(self):
+    def __init__(self, *args):
         super().__init__(3)
+        if args:
+            self.PAGE = args[0]
+            self.set_address(*args[1:])
         self.PAGE = self.register[0]
         self.PM = self.register[1]
         self.PL = self.register[2]
 
-    def __setattr__(self, name: str, value):
+    def __setattr__(self, name: str, value) -> None:
         if name in self.LOOKUP:
             self.__dict__[name] = value
             self.register[self.LOOKUP[name]] = value
