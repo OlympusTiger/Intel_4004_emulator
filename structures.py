@@ -2,7 +2,7 @@ from bitarray.util import int2ba, ba2int
 from bitarray import bitarray
 from typing import Literal, Union
 from functools import total_ordering
-from icecream import ic
+from icecream import ic  # noqa: F401
 
 
 @total_ordering
@@ -99,7 +99,6 @@ class Register:
         return self.register[key]
 
     def __setitem__(self, key: int, value: Word) -> None:
-        ic(key, value)
         self.register[key] = value
 
     def as_hex(self) -> str:
@@ -112,14 +111,23 @@ class Register:
 class ProgramCounter(Register):
     LOOKUP = {"PAGE": 0, "PM": 1, "PL": 2}
 
-    def __init__(self, *args):
+    def __init__(
+        self, page: Word | None = None, PM: Word | None = None, PL: Word | None = None
+    ):
         super().__init__(3)
-        if args:
-            self.PAGE = args[0]
-            self.set_address(*args[1:])
+        if page:
+            self.register[0] = page
+        if PM and PL:
+            self.set_address(PM, PL)
         self.PAGE = self.register[0]
         self.PM = self.register[1]
         self.PL = self.register[2]
+
+    def __repr__(self):
+        return f"{self.PAGE} {self.get_address()}"
+
+    def __str__(self):
+        return f"{self.PAGE.value} {self.PM.value} {self.PL.value}"
 
     def __setattr__(self, name: str, value) -> None:
         if name in self.LOOKUP:
